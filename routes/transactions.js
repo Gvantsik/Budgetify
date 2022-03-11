@@ -1,20 +1,28 @@
-const express = require("express");
-const req = require("express/lib/request");
-const database = require("../database/database");
+const express = require('express');
+const passport = require('passport');
+const {
+  getOneTransaction,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+} = require('../controllers/transactionsController');
+
 const transactionsRouter = express.Router();
+const authGuard = passport.authenticate('jwt', { session: false });
 
-transactionsRouter.get("/:id", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
+const Role = require('../auth/roles');
+const { authorize } = require('../auth/guards');
 
-transactionsRouter.post("/", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
+transactionsRouter
+  .get('/:id', authGuard, authorize(Role.User), getOneTransaction)
+  .patch('/:id', authGuard, authorize(Role.User), updateTransaction)
+  .delete('/:id', authGuard, authorize(Role.User), deleteTransaction);
 
-transactionsRouter.patch("/:id", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
-transactionsRouter.delete("/:id", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
+transactionsRouter.post(
+  '/',
+  authGuard,
+  authorize(Role.User),
+  createTransaction
+);
+
 module.exports = transactionsRouter;

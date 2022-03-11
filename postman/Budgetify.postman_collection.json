@@ -38,26 +38,13 @@
 					"response": []
 				},
 				{
-					"name": "logout",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "register",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "0.21237735779281142 Wed Mar 02 2022 21:10:22 GMT+0400 (Georgia Standard Time) tk",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \r\n}",
+							"raw": "{\r\n    \"email\": \"j@gmail.com\",\r\n    \"password\": \"1234578\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -65,7 +52,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/auth/logout",
+							"raw": "http://localhost:3000/auth/login",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -73,7 +60,7 @@
 							"port": "3000",
 							"path": [
 								"auth",
-								"logout"
+								"login"
 							]
 						}
 					},

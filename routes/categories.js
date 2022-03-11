@@ -1,23 +1,22 @@
-const express = require("express");
-const req = require("express/lib/request");
-const database = require("../database/database");
+const express = require('express');
+const passport = require('passport');
+const {
+  getAllCategories,
+  getOneCategory,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} = require('../controllers/categoriesController');
+
 const categoriesRouter = express.Router();
+const authGuard = passport.authenticate('jwt', { session: false });
+categoriesRouter
+  .get('/', authGuard, getAllCategories)
+  .post('/', authGuard, createCategory);
 
-categoriesRouter.get("/", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
-categoriesRouter.get("/:id", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
+categoriesRouter
+  .get('/:id', authGuard, getOneCategory)
+  .patch('/:id', authGuard, updateCategory)
+  .delete('/:id', authGuard, deleteCategory);
 
-categoriesRouter.post("/", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
-
-categoriesRouter.patch("/:id", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
-categoriesRouter.delete("/:id", (req, res) => {
-  res.status(200).json({ status: "success" });
-});
 module.exports = categoriesRouter;

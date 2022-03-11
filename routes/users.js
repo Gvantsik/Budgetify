@@ -1,53 +1,28 @@
-const express = require("express");
-const database = require("../database/database");
+const express = require('express');
+const passport = require('passport');
+const {
+  getAllUsers,
+  getOneUser,
+  getUsersAccounts,
+  getUsersTransactions,
+} = require('../controllers/usersController');
+
+const authGuard = passport.authenticate('jwt', { session: false });
+
+const Role = require('../auth/roles');
+const { authorize } = require('../auth/guards');
+
 const userRouter = express.Router();
 
-//get all users api only for admin
-userRouter.get("/", (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: database.users,
-  });
-});
-
-userRouter.get("/:id", (req, res) => {
-  for (let user of database.users) {
-    if (user.id === Number(req.params.id)) {
-      res.status(200).json({
-        status: "success",
-        user,
-      });
-      return;
-    }
-  }
-
-  res.status(404).json({
-    status: "error",
-    message: "User with given id doesn't exist",
-  });
-});
-userRouter.get("/:id/accounts", (req, res) => {
-  let userAccounts = [];
-  for (let account of database.accounts) {
-    if (account.user_id === Number(req.params.id)) {
-      userAccounts.push(account);
-    }
-  }
-  if (!userAccounts.length) {
-    res.status(404).json({
-      status: "error",
-      message: "User with given id does not have account",
-    });
-    return;
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: userAccounts,
-  });
-});
-userRouter.get("/:id/transactions", (req, res) => {
-    res.status(200).json({ status: "success" });
-})
+userRouter.get('/', authGuard, authorize(Role.Admin), getAllUsers);
+userRouter
+  .get('/:id', authGuard, getOneUser)
+  .get('/:id/accounts', authGuard, authorize(Role.User), getUsersAccounts)
+  .get(
+    '/:id/transactions',
+    authGuard,
+    authorize(Role.User),
+    getUsersTransactions
+  );
 
 module.exports = userRouter;
