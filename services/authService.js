@@ -55,7 +55,7 @@ exports.login = (req, res) => {
       id: user.id,
       email: user.email,
       role: user.userRole,
-      token: `Bearer ${token}`,
+      token: `${token}`,
     });
   } else {
     res
