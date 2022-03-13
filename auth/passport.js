@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { findUserByEmail } = require('../controllers/usersController');
+const { findUserByEmail } = require('../services/usersService');
 
 const jwtCallback = (jwt_payload, done) => {
   const user = findUserByEmail(jwt_payload.email);

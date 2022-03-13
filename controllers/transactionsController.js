@@ -1,24 +1,20 @@
-exports.getOneTransaction = (req, res) => {
-  res.status(200).json({ status: 'success' });
-};
+const express = require('express');
+const passport = require('passport');
+const {
+  getOneTransaction,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+} = require('../services/transactionsService');
 
-exports.createTransaction = (req, res) => {
-  res.status(200).json({ status: 'success' });
-};
+const transactionsRouter = express.Router();
+const authGuard = passport.authenticate('jwt', { session: false });
 
-exports.updateTransaction = (req, res) => {
-  res.status(202).json({
-    status: 'success',
-    data: {
-      message: 'requested transaction updated successfully',
-    },
-  });
-};
-exports.deleteTransaction = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      message: 'deleted successfully',
-    },
-  });
-};
+transactionsRouter
+  .get('/:id', authGuard, getOneTransaction)
+  .patch('/:id', authGuard, updateTransaction)
+  .delete('/:id', authGuard, deleteTransaction);
+
+transactionsRouter.post('/', authGuard, createTransaction);
+
+module.exports = transactionsRouter;

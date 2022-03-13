@@ -1,20 +1,23 @@
-const database = require('../models/database');
+const express = require('express');
+const passport = require('passport');
+const {
+  getAllUsers,
+  getOneUser,
+  getUsersAccounts,
+  getUsersTransactions,
+} = require('../services/usersService');
 
-exports.getAllUsers = (req, res) => {
-  res.status(200).json({ status: 'success' });
-};
-exports.getOneUser = (req, res) => {
-  res.status(200).json({ status: 'success' });
-};
+const authGuard = passport.authenticate('jwt', { session: false });
 
-exports.getUsersTransactions = (req, res) => {
-  res.status(200).json({ status: 'success' });
-};
+const Role = require('../auth/roles');
+const { authorize } = require('../auth/guards');
 
-exports.getUsersAccounts = (req, res) => {
-  res.status(200).json({ status: 'success' });
-};
-// eslint-disable-next-line arrow-body-style
-exports.findUserByEmail = (email) => {
-  return database.users.find((user) => user.email === email);
-};
+const userRouter = express.Router();
+
+userRouter.get('/', authGuard, authorize(Role.Admin), getAllUsers);
+userRouter
+  .get('/:id', authGuard, getOneUser)
+  .get('/:id/accounts', authGuard, getUsersAccounts)
+  .get('/:id/transactions', authGuard, getUsersTransactions);
+
+module.exports = userRouter;

@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const passport = require('passport');
-const usersRouter = require('./routes/users');
-const authRouter = require('./routes/auth');
-const accountsRouter = require('./routes/accounts');
-const categoriesRouter = require('./routes/categories');
-const transactionsRouter = require('./routes/transactions');
+const usersRouter = require('./controllers/usersController');
+const authRouter = require('./controllers/authController');
+const accountsRouter = require('./controllers/accountsController');
+const categoriesRouter = require('./controllers/categoriesController');
+const transactionsRouter = require('./controllers/transactionsController');
 
 require('dotenv').config();
 

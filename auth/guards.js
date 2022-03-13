@@ -1,4 +1,4 @@
-const { findUserByEmail } = require('../controllers/usersController');
+const { findUserByEmail } = require('../services/usersService');
 
 const authorize = (roles = []) => {
   if (typeof roles === 'string') {
