@@ -9,15 +9,15 @@ const {
 
 const authGuard = passport.authenticate('jwt', { session: false });
 
-const Role = require('../auth/roles');
+// const Role = require('../auth/roles');
 const { authorize } = require('../auth/guards');
 
 const userRouter = express.Router();
 
-userRouter.get('/', authGuard, authorize(Role.Admin), getAllUsers);
+userRouter.get('/', authGuard, authorize, getAllUsers);
 userRouter
   .get('/:id', authGuard, getOneUser)
-  .get('/:id/accounts', authGuard, getUsersAccounts)
+
   .get('/:id/transactions', authGuard, getUsersTransactions);
 
 module.exports = userRouter;

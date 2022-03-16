@@ -5,6 +5,7 @@ const {
   updateAccount,
   createAccount,
   deleteAccount,
+  getUsersAccounts,
 } = require('../services/accountsService');
 
 const accountsRouter = express.Router();
@@ -12,6 +13,7 @@ const authGuard = passport.authenticate('jwt', { session: false });
 
 accountsRouter
   .get('/:id', authGuard, getOneAccount)
+  .get('/', authGuard, getUsersAccounts)
   .patch('/:id', authGuard, updateAccount)
   .delete('/:id', authGuard, deleteAccount);
 

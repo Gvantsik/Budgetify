@@ -14,26 +14,43 @@ const options = {
 };
 
 passport.use(new JwtStrategy(options, jwtCallback));
-const database = require('../data/database');
 
-exports.register = (req, res) => {
-  const existingEmail = findUserByEmail(req.body.email);
-  if (existingEmail) {
-    res.status(401).json({ message: 'User with this email already exists' });
-  } else {
-    database.users.push({
-      id: database.users.length + 1,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10),
-      role: req.body.role,
-    });
+const User = require('../data/usersEntity');
 
-    res.status(200).json({ message: 'User registered successfully' });
+exports.register = async (req, res) => {
+  try {
+    const existingEmail = await findUserByEmail(req.body.email);
+
+    if (existingEmail) {
+      res.status(409).json({ message: 'User with this email already exists' });
+    } else {
+      const newUser = new User({
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 10),
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        role: req.body.role,
+        countryOfResidence: req.body.countryOfResidence,
+        gender: req.body.gender,
+      });
+      await newUser.save();
+      res
+        .status(200)
+        .json({ message: 'User registered successfully', data: newUser });
+    }
+  } catch (err) {
+    res.status(400).json({ message: 'error', data: err.message });
   }
 };
 
-exports.login = (req, res) => {
-  const user = findUserByEmail(req.body.email);
+exports.login = async (req, res) => {
+  const user = await findUserByEmail(req.body.email);
+
+  if (!user) {
+    return res
+      .status(401)
+      .json({ message: 'Please, check email and password and try again' });
+  }
   const confirmedPassword = bcrypt.compareSync(
     req.body.password,
     user.password
@@ -42,7 +59,7 @@ exports.login = (req, res) => {
     const payload = {
       id: user.id,
       email: user.email,
-      role: user.userRole,
+      role: user.role,
     };
 
     const token = jwt.sign(
@@ -54,12 +71,8 @@ exports.login = (req, res) => {
     res.status(200).json({
       id: user.id,
       email: user.email,
-      role: user.userRole,
+      role: user.role,
       token: `${token}`,
     });
-  } else {
-    res
-      .status(401)
-      .json({ message: 'Please, check email and password and try again' });
   }
 };

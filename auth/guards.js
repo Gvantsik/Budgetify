@@ -1,21 +1,16 @@
 const { findUserByEmail } = require('../services/usersService');
 
-const authorize = (roles = []) => {
-  if (typeof roles === 'string') {
-    this.roles = [roles];
-  }
-  return [
-    (req, res, next) => {
-      const user = findUserByEmail(req.user.email);
+const authorize = async (req, res, next) => {
+  const loggedUser = await req.user;
+  const user = await findUserByEmail(loggedUser.email);
 
-      if (user && roles.includes(user.userRole)) {
-        next();
-      } else {
-        res.status(403).json({ message: 'Unauthorized' });
-      }
-    },
-  ];
+  if (user && user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Unauthorized' });
+  }
 };
+
 module.exports = {
   authorize,
 };
