@@ -3,19 +3,6 @@ const Category = require('../data/categoriesEntity');
 const Transaction = require('../data/transactionsEntity');
 const Account = require('../data/accountsEntity');
 
-async function accountBalance(accountId) {
-  const accountTransactions = await Transaction.find({
-    account_id: accountId,
-  });
-
-  let existingBalance = 0;
-  for (let i = 0; i < accountTransactions.length; i += 1) {
-    existingBalance += accountTransactions[i].amount;
-  }
-
-  return existingBalance;
-}
-
 exports.getOneTransaction = async (req, res) => {
   try {
     const user = await req.user;
@@ -101,9 +88,7 @@ exports.createTransaction = async (req, res) => {
 
     // if type is expense, checks whether user has enough positive amount
     if (type === 'expense') {
-      const existingBalance = await accountBalance(account_id);
-
-      if (existingBalance === 0 || existingBalance < Math.abs(amount)) {
+      if (account.balance === 0 || account.balance < Math.abs(amount)) {
         return res.status(400).json({
           status: errorMessage,
           message: 'There is not enough amount for spending',
@@ -146,14 +131,13 @@ exports.updateTransaction = async (req, res) => {
       user_id: user.id,
     });
 
+    const account = await Account.findById(transaction.account_id);
+
     /* when user updates transaction's amount,
 checks whether updated expense amount will not turn account's balance negative  */
     if (transaction.type === 'expense' && req.body.amount) {
       req.body.amount = -Math.abs(req.body.amount);
-      const accBalance =
-        (await accountBalance(transaction.account_id)) -
-        transaction.amount +
-        req.body.amount;
+      const accBalance = account.balance - transaction.amount + req.body.amount;
 
       if (accBalance < 0) {
         return res.status(409).json({
@@ -188,7 +172,7 @@ checks whether updated expense amount will not turn account's balance negative  
 
     await Account.findOneAndUpdate(
       { id: updatedTransaction.account_id, user_id: user.id },
-      { balance: await accountBalance(updatedTransaction.account_id) },
+      { balance: account.balance - transaction.amount + req.body.amount },
       { new: true }
     );
 
@@ -218,9 +202,10 @@ exports.deleteTransaction = async (req, res) => {
       });
     }
     // updates account balance after deleted transaction
+    const account = await Account.findById(transaction.account_id);
     await Account.findOneAndUpdate(
       { id: transaction.account_id, user_id: user.id },
-      { balance: await accountBalance(transaction.account_id) },
+      { balance: account.balance - transaction.amount },
       { new: true }
     );
     return res.status(200).json({

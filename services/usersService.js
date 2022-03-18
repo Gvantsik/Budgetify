@@ -22,7 +22,7 @@ exports.getOneUser = async (req, res) => {
   try {
     const user = await req.user;
 
-    if (user && user.id === req.params.id) {
+    if ((user && user.id === req.params.id) || user.role === 'admin') {
       const result = await User.findById(user.id);
       res.status(200).json({ status: successMessage, data: result });
     }
