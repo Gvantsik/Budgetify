@@ -109,48 +109,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "get all accounts by user id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/users/2/accounts",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"users",
-								"2",
-								"accounts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get all transactions by user id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/users/2/transactions",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"users",
-								"2",
-								"transactions"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -267,6 +225,27 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get all accounts by user id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/users/2/accounts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"2",
+								"accounts"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -379,6 +358,27 @@
 							"path": [
 								"transactions",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all transactions by user id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/users/2/transactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"2",
+								"transactions"
 							]
 						}
 					},

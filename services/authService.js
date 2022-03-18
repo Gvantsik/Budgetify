@@ -16,6 +16,7 @@ const options = {
 passport.use(new JwtStrategy(options, jwtCallback));
 
 const User = require('../data/usersEntity');
+const { successMessage, errorMessage } = require('../utils/responseMessages');
 
 exports.register = async (req, res) => {
   try {
@@ -36,10 +37,10 @@ exports.register = async (req, res) => {
       await newUser.save();
       res
         .status(200)
-        .json({ message: 'User registered successfully', data: newUser });
+        .json({ status: 'User registered successfully', data: newUser });
     }
   } catch (err) {
-    res.status(400).json({ message: 'error', data: err.message });
+    res.status(400).json({ status: errorMessage, data: err.message });
   }
 };
 
@@ -47,9 +48,10 @@ exports.login = async (req, res) => {
   const user = await findUserByEmail(req.body.email);
 
   if (!user) {
-    return res
-      .status(401)
-      .json({ message: 'Please, check email and password and try again' });
+    return res.status(401).json({
+      status: errorMessage,
+      message: 'Please, check email and password and try again',
+    });
   }
   const confirmedPassword = bcrypt.compareSync(
     req.body.password,
@@ -69,10 +71,13 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
     res.status(200).json({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      token: `${token}`,
+      status: successMessage,
+      data: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        token: `${token}`,
+      },
     });
   }
 };

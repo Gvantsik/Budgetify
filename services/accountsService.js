@@ -1,32 +1,26 @@
 const Account = require('../data/accountsEntity');
+const Transaction = require('../data/transactionsEntity');
+const { errorMessage, successMessage } = require('../utils/responseMessages');
 
-const successMessage = 'success';
-const errorMessage = 'error';
-
-async function checkRelation(userId, accountId) {
-  const result = await Account.findOne({
-    user_id: userId,
-    _id: accountId,
-  }).exec();
-  return result;
-}
 exports.getOneAccount = async (req, res) => {
   try {
     const user = await req.user;
 
-    const ownsAccount = await checkRelation(user.id, req.params.id);
+    const account = await Account.findOne({
+      user_id: user.id,
+      _id: req.params.id,
+    }).exec();
 
-    if (!ownsAccount) {
+    if (!account) {
       return res.status(404).json({
         status: errorMessage,
         message: "Account with given id doesn't exist",
       });
     }
-    const result = await Account.findById(req.params.id);
 
-    res.status(200).json({
+    return res.status(200).json({
       status: successMessage,
-      data: result,
+      data: account,
     });
   } catch (err) {
     return res.status(400).json({ status: errorMessage, message: err.message });
@@ -65,20 +59,24 @@ exports.createAccount = async (req, res) => {
 exports.updateAccount = async (req, res) => {
   try {
     const user = await req.user;
-    const ownsAccount = await checkRelation(user.id, req.params.id);
-    if (!ownsAccount) {
-      return res.status(409).json({
-        status: errorMessage,
-        message: 'User does not belong requested account',
-      });
-    }
+    const updatedAccount = await Account.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user_id: user.id,
+      },
+      { ...req.body },
 
-    const updatedAccount = await Account.findByIdAndUpdate(
-      req.params.id,
-      req.body,
       { new: true }
     );
-    res.status(200).json({
+    if (!updatedAccount) {
+      return res.status(404).json({
+        status: errorMessage,
+        data: {
+          message: 'requested account was not found',
+        },
+      });
+    }
+    return res.status(200).json({
       status: successMessage,
       data: updatedAccount,
     });
@@ -90,22 +88,28 @@ exports.updateAccount = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
   try {
     const user = await req.user;
-    const ownsAccount = await checkRelation(user.id, req.params.id);
-    if (!ownsAccount) {
-      return res.status(409).json({
+    const deletedAccount = await Account.findOneAndDelete({
+      _id: req.params.id,
+      user_id: user.id,
+    });
+    if (!deletedAccount) {
+      return res.status(404).json({
         status: errorMessage,
-        message: 'User does not belong requested account',
+        data: {
+          message: 'requested account was not found',
+        },
       });
     }
-    await Account.findByIdAndDelete(req.params.id);
-    res.status(200).json({
+    await Transaction.deleteMany({ account_id: req.params.id });
+
+    return res.status(200).json({
       status: successMessage,
       data: {
         message: 'deleted successfully',
       },
     });
   } catch (err) {
-    return res.status(400).json({ status: 'erros', message: err.message });
+    return res.status(400).json({ status: errorMessage, message: err.message });
   }
 };
 exports.getUsersAccounts = async (req, res) => {

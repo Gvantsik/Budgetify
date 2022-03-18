@@ -1,15 +1,23 @@
 const mongoose = require('mongoose');
 
+const validateEmail = function (email) {
+  const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
+};
+
 const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
       required: true,
       unique: true,
-      validate: {
-        validator: (v) => v.includes('@'),
-        message: (prop) => `Email (${prop.value}) must be valid e-mail`,
-      },
+      trim: true,
+      lowercase: true,
+      validate: [validateEmail, 'Please fill a valid email address'],
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        'Please fill a valid email address',
+      ],
     },
     password: String,
     firstName: {

@@ -15,9 +15,6 @@ const { authorize } = require('../auth/guards');
 const userRouter = express.Router();
 
 userRouter.get('/', authGuard, authorize, getAllUsers);
-userRouter
-  .get('/:id', authGuard, getOneUser)
-
-  .get('/:id/transactions', authGuard, getUsersTransactions);
+userRouter.get('/:id', authGuard, getOneUser);
 
 module.exports = userRouter;

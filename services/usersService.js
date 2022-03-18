@@ -10,7 +10,10 @@ exports.getAllUsers = async (req, res) => {
       firstName: user.firstName,
       lastName: user.lastName,
     }));
-    res.status(200).json({ status: successMessage, data: result });
+    const numberOfUsers = result.length;
+    res
+      .status(200)
+      .json({ status: successMessage, data: { total: numberOfUsers, result } });
   } catch (err) {
     return res.status(400).json({ status: errorMessage, message: err.message });
   }
@@ -29,10 +32,6 @@ exports.getOneUser = async (req, res) => {
       message: 'User with given id does not exist',
     });
   }
-};
-
-exports.getUsersTransactions = (req, res) => {
-  res.status(200).json({ status: successMessage });
 };
 
 // eslint-disable-next-line no-return-await
