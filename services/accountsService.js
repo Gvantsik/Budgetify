@@ -115,7 +115,7 @@ exports.deleteAccount = async (req, res) => {
 exports.getUsersAccounts = async (req, res) => {
   try {
     const user = await req.user;
-    const result = await Account.find().where('user_id').equals(user.id).exec();
+    const result = await Account.find({ user_id: user.id }).exec();
     res.status(200).json({ status: successMessage, data: result });
   } catch (err) {
     return res.status(400).json({ status: errorMessage, message: err.message });
