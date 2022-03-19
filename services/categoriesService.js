@@ -4,7 +4,7 @@ const { errorMessage, successMessage } = require('../utils/responseMessages');
 
 exports.getAllCategories = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const result = await Category.find()
       .where('user_id')
       .equals(user.id)
@@ -17,7 +17,7 @@ exports.getAllCategories = async (req, res) => {
 
 exports.getOneCategory = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
 
     const category = await Category.findOne({
       user_id: user.id,
@@ -43,7 +43,7 @@ exports.getOneCategory = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const existingCategory = await Category.findOne({
       user_id: user.id,
       title: req.body.title,
@@ -73,7 +73,7 @@ exports.createCategory = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const updatedCategory = await Category.findOneAndUpdate(
       {
         _id: req.params.id,
@@ -101,7 +101,7 @@ exports.updateCategory = async (req, res) => {
 };
 exports.deleteCategory = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const findCategoryInTransactions = await Transaction.find({
       user_id: user.id,
       category_id: req.params.id,

@@ -5,7 +5,7 @@ const Account = require('../data/accountsEntity');
 
 exports.getOneTransaction = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
 
     const transaction = await Transaction.findOne({
       user_id: user.id,
@@ -40,7 +40,7 @@ exports.createTransaction = async (req, res) => {
     }
 
     // checks whether user belongs the account, on which user wanna make transaction
-    const user = await req.user;
+    const { user } = req;
     const account = await Account.findOne({
       user_id: user.id,
       _id: account_id,
@@ -125,7 +125,7 @@ exports.createTransaction = async (req, res) => {
 
 exports.updateTransaction = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const transaction = await Transaction.findOne({
       _id: req.params.id,
       user_id: user.id,
@@ -186,7 +186,7 @@ checks whether updated expense amount will not turn account's balance negative  
 };
 exports.deleteTransaction = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const transaction = await Transaction.findById(req.params.id);
 
     const deletedTransaction = await Transaction.findOneAndDelete({
@@ -220,7 +220,7 @@ exports.deleteTransaction = async (req, res) => {
 };
 exports.getUsersTransactions = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const account = await Account.findOne({
       _id: req.params.id,
       user_id: user.id,

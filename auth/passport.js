@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 const { findUserByEmail } = require('../services/usersService');
 
-const jwtCallback = (jwt_payload, done) => {
-  const user = findUserByEmail(jwt_payload.email);
+const jwtCallback = async (jwt_payload, done) => {
+  const user = await findUserByEmail(jwt_payload.email);
   if (user) {
     return done(null, user);
   }

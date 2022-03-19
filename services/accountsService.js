@@ -4,8 +4,7 @@ const { errorMessage, successMessage } = require('../utils/responseMessages');
 
 exports.getOneAccount = async (req, res) => {
   try {
-    const user = await req.user;
-
+    const { user } = req;
     const account = await Account.findOne({
       user_id: user.id,
       _id: req.params.id,
@@ -29,7 +28,7 @@ exports.getOneAccount = async (req, res) => {
 
 exports.createAccount = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const existingAccount = await Account.findOne({
       user_id: user.id,
       title: req.body.title,
@@ -58,7 +57,7 @@ exports.createAccount = async (req, res) => {
 
 exports.updateAccount = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const updatedAccount = await Account.findOneAndUpdate(
       {
         _id: req.params.id,
@@ -87,7 +86,7 @@ exports.updateAccount = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const deletedAccount = await Account.findOneAndDelete({
       _id: req.params.id,
       user_id: user.id,
@@ -114,7 +113,7 @@ exports.deleteAccount = async (req, res) => {
 };
 exports.getUsersAccounts = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
     const result = await Account.find({ user_id: user.id }).exec();
     res.status(200).json({ status: successMessage, data: result });
   } catch (err) {

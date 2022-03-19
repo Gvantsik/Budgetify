@@ -20,7 +20,7 @@ exports.getAllUsers = async (req, res) => {
 };
 exports.getOneUser = async (req, res) => {
   try {
-    const user = await req.user;
+    const { user } = req;
 
     if ((user && user.id === req.params.id) || user.role === 'admin') {
       const result = await User.findById(user.id);
